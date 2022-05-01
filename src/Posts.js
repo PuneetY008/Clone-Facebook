@@ -53,7 +53,7 @@ function Posts(props) {
     // saving to users own posts
     //currentUserDetails.posts.unshift(createdPost);
     //console.log(currentUserDetails);
-
+    const currentUserLikedPosts = currentUserDetails.likedPosts;
     const newAllUserDetails = {
       ...allUsersDetails,
       [currentUser.email]: {
@@ -61,7 +61,7 @@ function Posts(props) {
         userImg:
           "https://i.pinimg.com/474x/bd/b9/c6/bdb9c62a0c858ead77a97d85c16056c9.jpg",
         posts: [createdPost, ...currentUserDetails.posts],
-        likedPosts: [],
+        likedPosts: currentUserLikedPosts,
       },
     };
     //console.log(newAllUserDetails);

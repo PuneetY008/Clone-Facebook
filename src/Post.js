@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { withStyles } from "@material-ui/core";
 import styles from "./styles/PostStyles";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
@@ -11,9 +11,11 @@ import AddCommentForm from "./AddCommentForm";
 import { v4 as uuidv4 } from "uuid";
 
 function Post(props) {
-  const { classes, username, userImg, uploadTime, postContent, likedBy } =
+  const { classes, id, username, userImg, uploadTime, postContent, likedBy } =
     props;
   //console.log(props);
+  const postId = id;
+  //console.log(likedBy);
 
   const initialComments = [
     { id: uuidv4(), text: "Verry good man, keep it up" },
@@ -23,12 +25,98 @@ function Post(props) {
 
   const [isCommenting, toggleIsCommenting] = useToggle(false);
   const [comments, setComments] = useState(initialComments);
+  const [likes, setLikes] = useState(likedBy);
 
   const noOfComments = comments.length;
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
   const addComment = (newCommentText) => {
     setComments([...comments, { id: uuidv4(), text: newCommentText }]);
   };
+
+  function handleLike() {
+    console.log("liked--", postId);
+    //console.log(likes.indexOf(currentUser.email));
+    if (likes.indexOf(currentUser.email) === -1) {
+      setLikes([...likes, currentUser.email]);
+    } else {
+      setLikes(likes.filter((el) => el !== currentUser.email));
+      //console.log(likes);
+    }
+  }
+
+  useEffect(() => {
+    //console.log(likes);
+    const allPosts = JSON.parse(localStorage.getItem("Posts"));
+    const clickedPost = allPosts.filter((post) => post.id === postId)[0];
+    const clickedPostIndex = allPosts.indexOf(clickedPost);
+    //console.log("index of clicked--", clickedPostIndex);
+    //const filteredPosts = allPosts.filter((post) => post.id !== postId);
+    const editedPost = {
+      id: clickedPost.id,
+      postContent: clickedPost.postContent,
+      username: clickedPost.username,
+      uploadTime: clickedPost.uploadTime,
+      likedBy: likes,
+    };
+    //console.log(editedPost);
+    //const combinedPosts = [...filteredPosts, editedPost];
+    allPosts.splice(clickedPostIndex, 1, editedPost);
+    //console.log(allPosts);
+    localStorage.setItem("Posts", JSON.stringify(allPosts));
+    //console.log(JSON.parse(localStorage.getItem("Posts")));
+
+    //also changing in users profile,which posts are liked by the user
+    if (likes.indexOf(currentUser.email) !== -1) {
+      const allUsersDetails = JSON.parse(
+        localStorage.getItem("allUsersDetails")
+      );
+      const currentUserDetails = allUsersDetails[currentUser.email];
+      const allLikedPosts = currentUserDetails.likedPosts;
+      let newLikedPosts;
+      if (allLikedPosts.indexOf(postId) === -1) {
+        newLikedPosts = [...allLikedPosts, postId];
+      } else {
+        newLikedPosts = [...allLikedPosts];
+      }
+      const changedUsersDetails = {
+        ...allUsersDetails,
+        [currentUser.email]: {
+          ...currentUserDetails,
+          likedPosts: newLikedPosts,
+        },
+      };
+      localStorage.setItem(
+        "allUsersDetails",
+        JSON.stringify(changedUsersDetails)
+      );
+      console.log(
+        JSON.parse(localStorage.getItem("allUsersDetails"))[currentUser.email]
+      );
+    } else {
+      const allUsersDetails = JSON.parse(
+        localStorage.getItem("allUsersDetails")
+      );
+      const currentUserDetails = allUsersDetails[currentUser.email];
+      const newLikedPosts = currentUserDetails.likedPosts.filter(
+        (el) => el !== postId
+      );
+      const changedUsersDetails = {
+        ...allUsersDetails,
+        [currentUser.email]: {
+          ...currentUserDetails,
+          likedPosts: newLikedPosts,
+        },
+      };
+      localStorage.setItem(
+        "allUsersDetails",
+        JSON.stringify(changedUsersDetails)
+      );
+      console.log(
+        JSON.parse(localStorage.getItem("allUsersDetails"))[currentUser.email]
+      );
+    }
+  }, [likes]);
 
   return (
     <div className={classes.root}>
@@ -70,7 +158,7 @@ function Post(props) {
         <div className={classes.footerUpper}>
           <div className={classes.footerLikes}>
             <ThumbUpIcon fontSize="small" style={{ color: "#4267B2" }} />
-            <span>{likedBy.length} likes</span>
+            <span>{likes.length} likes</span>
           </div>
           <div className={classes.footerComments} onClick={toggleIsCommenting}>
             <span>{noOfComments} comments</span>
@@ -78,12 +166,18 @@ function Post(props) {
         </div>
         <hr style={{ color: "#898F9C" }} />
         <div className={classes.footerLower}>
-          <div>
-            <ThumbUpOutlinedIcon
-              fontSize="small"
-              style={{ color: "#898F9C" }}
-            />
-            <span>Like</span>
+          <div onClick={handleLike}>
+            {likes.indexOf(currentUser.email) === -1 ? (
+              <ThumbUpOutlinedIcon
+                fontSize="small"
+                style={{ color: "#898F9C" }}
+              />
+            ) : (
+              <ThumbUpIcon fontSize="small" style={{ color: "#4267B2" }} />
+            )}
+            <span>
+              {likes.indexOf(currentUser.email) === -1 ? "Like" : "Dislike"}
+            </span>
           </div>
           <div onClick={toggleIsCommenting}>
             <ChatBubbleOutlineIcon

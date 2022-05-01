@@ -56,28 +56,7 @@ function SignupForm(props) {
       [newUser.email]: {
         userImg:
           "https://i.pinimg.com/474x/bd/b9/c6/bdb9c62a0c858ead77a97d85c16056c9.jpg",
-        posts: [
-          {
-            id: uuidv4(),
-            username: newUser.email,
-            uploadTime: "yesterday",
-            postContent: {
-              text: "hey there!! Enjoying with friends",
-              img: "https://i.pinimg.com/474x/bd/b9/c6/bdb9c62a0c858ead77a97d85c16056c9.jpg",
-            },
-            likedBy: [],
-          },
-          {
-            id: uuidv4(),
-            username: newUser.email,
-            uploadTime: "day before yesterday",
-            postContent: {
-              text: "hey there!! Enjoying with friends",
-              img: "https://i.pinimg.com/474x/bd/b9/c6/bdb9c62a0c858ead77a97d85c16056c9.jpg",
-            },
-            likedBy: [],
-          },
-        ],
+        posts: [],
         likedPosts: [],
       },
     };
