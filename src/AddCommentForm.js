@@ -3,6 +3,8 @@ import { TextField, Paper, Button } from "@material-ui/core";
 import useInputState from "./hooks/useInputState";
 import { withStyles } from "@material-ui/styles";
 import styles from "./styles/AddCommentFormStyles";
+import FavoriteRoundedIcon from "@material-ui/icons/FavoriteRounded";
+import FavoriteBorderRoundedIcon from "@material-ui/icons/FavoriteBorderRounded";
 
 function AddCommentForm({ classes, addComment, comments }) {
   const [value, handleChange, reset] = useInputState("");
@@ -37,9 +39,30 @@ function AddCommentForm({ classes, addComment, comments }) {
 
       <div className={classes.allCommentsDiv}>
         <h2>All Comments</h2>
-        {comments.map((comment) => (
-          <p className={classes.commentPara}>{comment.text}</p>
-        ))}
+        {comments.length === 0 ? (
+          <h4>No Comments Yet!!.Be the first one to Comment</h4>
+        ) : (
+          comments.map((comment) => (
+            <div className={classes.commentDiv} key={comment.id}>
+              <p>
+                <b>{comment.text}</b>
+              </p>
+              <div className={classes.commentDetailsDiv}>
+                <div>
+                  <span>{`By-${comment.username}`}</span>
+                </div>
+                <div>
+                  <span>{`${comment.commentLikes.length} total likes`}</span>
+                </div>
+                <div>
+                  <FavoriteBorderRoundedIcon fontSize="small" />
+                  <span>like</span>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+        {}
       </div>
     </Paper>
   );

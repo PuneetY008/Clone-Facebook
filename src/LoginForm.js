@@ -37,19 +37,23 @@ function LoginForm(props) {
     const givenDetails = { email: email, password: password };
     const registeredUsers = JSON.parse(localStorage.getItem("Users"));
     if (registeredUsers) {
-      if (
-        registeredUsers.some(
-          (user) =>
-            user.email === givenDetails.email &&
-            user.password === givenDetails.password
-        )
-      ) {
-        //console.log("Details Correct!");
-        localStorage.setItem("currentUser", JSON.stringify(givenDetails));
-        window.location.pathname = "/";
+      if (registeredUsers.some((user) => user.email === givenDetails.email)) {
+        if (
+          registeredUsers.some(
+            (user) =>
+              user.email === givenDetails.email &&
+              user.password === givenDetails.password
+          )
+        ) {
+          //console.log("Details Correct!");
+          localStorage.setItem("currentUser", JSON.stringify(givenDetails));
+          window.location.pathname = "/";
+        } else {
+          setIsIncDetails(true);
+          return;
+        }
       } else {
-        setIsIncDetails(true);
-        return;
+        setIsUserNotThere(true);
       }
     } else {
       setIsUserNotThere(true);

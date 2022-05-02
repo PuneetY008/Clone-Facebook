@@ -41,6 +41,7 @@ function Posts(props) {
         img: "",
       },
       likedBy: [],
+      comments: [],
     };
     const savedPosts = localStorage.getItem("Posts")
       ? JSON.parse(localStorage.getItem("Posts"))
@@ -74,7 +75,7 @@ function Posts(props) {
       <Navbar />
       <div className={classes.root}>
         <h2>Your Feed</h2>
-        <Paper style={{ margin: "0.5rem 0" }}>
+        <Paper style={{ margin: "0.5rem 0", paddingTop: "0.6rem" }}>
           <form className={classes.createPostForm} onSubmit={handleCreatePost}>
             <div className={classes.createPostUpperDiv}>
               <img

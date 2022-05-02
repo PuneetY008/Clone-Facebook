@@ -11,27 +11,46 @@ import AddCommentForm from "./AddCommentForm";
 import { v4 as uuidv4 } from "uuid";
 
 function Post(props) {
-  const { classes, id, username, userImg, uploadTime, postContent, likedBy } =
-    props;
+  const {
+    classes,
+    id,
+    username,
+    userImg,
+    uploadTime,
+    postContent,
+    likedBy,
+    comments,
+  } = props;
   //console.log(props);
   const postId = id;
   //console.log(likedBy);
 
-  const initialComments = [
-    { id: uuidv4(), text: "Verry good man, keep it up" },
-    { id: uuidv4(), text: "All thanks to you!" },
-    { id: uuidv4(), text: "Hey!! That sounds interesting haha..." },
-  ];
+  // const initialComments = [
+  //   ...comments,
+  //   { id: uuidv4(), text: "Verry good man, keep it up" },
+  //   { id: uuidv4(), text: "All thanks to you!" },
+  //   { id: uuidv4(), text: "Hey!! That sounds interesting haha..." },
+  // ];
+  const initialComments = comments ? [...comments] : [];
+  console.log(initialComments);
 
   const [isCommenting, toggleIsCommenting] = useToggle(false);
-  const [comments, setComments] = useState(initialComments);
+  const [allComments, setAllComments] = useState(initialComments);
   const [likes, setLikes] = useState(likedBy);
 
-  const noOfComments = comments.length;
+  const noOfComments = allComments.length;
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
   const addComment = (newCommentText) => {
-    setComments([...comments, { id: uuidv4(), text: newCommentText }]);
+    setAllComments([
+      ...allComments,
+      {
+        id: uuidv4(),
+        text: newCommentText,
+        username: currentUser.email,
+        commentLikes: [],
+      },
+    ]);
   };
 
   function handleLike() {
@@ -90,9 +109,9 @@ function Post(props) {
         "allUsersDetails",
         JSON.stringify(changedUsersDetails)
       );
-      console.log(
-        JSON.parse(localStorage.getItem("allUsersDetails"))[currentUser.email]
-      );
+      // console.log(
+      //   JSON.parse(localStorage.getItem("allUsersDetails"))[currentUser.email]
+      // );
     } else {
       const allUsersDetails = JSON.parse(
         localStorage.getItem("allUsersDetails")
@@ -112,11 +131,25 @@ function Post(props) {
         "allUsersDetails",
         JSON.stringify(changedUsersDetails)
       );
-      console.log(
-        JSON.parse(localStorage.getItem("allUsersDetails"))[currentUser.email]
-      );
+      // console.log(
+      //   JSON.parse(localStorage.getItem("allUsersDetails"))[currentUser.email]
+      // );
     }
   }, [likes]);
+
+  useEffect(() => {
+    const allPosts = JSON.parse(localStorage.getItem("Posts"));
+    //console.log(allPosts);
+    const commentedPost = allPosts.filter((post) => post.id === postId)[0];
+    // console.log(commentedPost);
+    const commentedPostIndex = allPosts.indexOf(commentedPost);
+    const editedPost = {
+      ...commentedPost,
+      comments: allComments,
+    };
+    allPosts.splice(commentedPostIndex, 1, editedPost);
+    localStorage.setItem("Posts", JSON.stringify(allPosts));
+  }, [allComments]);
 
   return (
     <div className={classes.root}>
@@ -193,7 +226,7 @@ function Post(props) {
         </div>
         {isCommenting ? (
           <div>
-            <AddCommentForm comments={comments} addComment={addComment} />
+            <AddCommentForm comments={allComments} addComment={addComment} />
           </div>
         ) : (
           ""
