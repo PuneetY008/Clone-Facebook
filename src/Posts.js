@@ -1,6 +1,6 @@
 import { withStyles } from "@material-ui/styles";
 import { Paper, Input, Typography } from "@material-ui/core";
-import React from "react";
+import { React, useState } from "react";
 import styles from "./styles/PostsStyles";
 import Post from "./Post";
 import Navbar from "./Navbar";
@@ -15,6 +15,7 @@ function Posts(props) {
 
   const [createPostText, handleCreatePostTextChange, resetCreatePostText] =
     useInputState("");
+  const [createPostImg, setCreatePostImg] = useState("");
 
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
   //console.log(currentUser);
@@ -38,7 +39,7 @@ function Posts(props) {
       uploadTime: "Today",
       postContent: {
         text: newPostText,
-        img: "",
+        img: createPostImg,
       },
       likedBy: [],
       comments: [],
@@ -50,6 +51,7 @@ function Posts(props) {
     localStorage.setItem("Posts", JSON.stringify(postsArray));
     //console.log(JSON.parse(localStorage.getItem("Posts")));
     resetCreatePostText();
+    setCreatePostImg("");
 
     // saving to users own posts
     //currentUserDetails.posts.unshift(createdPost);
@@ -68,6 +70,12 @@ function Posts(props) {
     //console.log(newAllUserDetails);
     localStorage.setItem("allUsersDetails", JSON.stringify(newAllUserDetails));
     //console.log(JSON.parse(localStorage.getItem("allUsersDetails")));
+  }
+
+  function addPhoto() {
+    const postImg =
+      "https://i.pinimg.com/474x/bd/b9/c6/bdb9c62a0c858ead77a97d85c16056c9.jpg";
+    createPostImg ? setCreatePostImg("") : setCreatePostImg(postImg);
   }
 
   return (
@@ -92,8 +100,11 @@ function Posts(props) {
                 fullWidth
               ></Input>
             </div>
+            <div className={classes.createPostImgDiv}>
+              {createPostImg ? <img src={createPostImg}></img> : ""}
+            </div>
             <div className={classes.createPostLowerDiv}>
-              <div>
+              <div onClick={addPhoto}>
                 <AddPhotoAlternateRoundedIcon fontSize="small" />
                 <Typography>Photo/Video</Typography>
                 <input type="file" hidden></input>

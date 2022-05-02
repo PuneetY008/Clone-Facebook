@@ -32,7 +32,7 @@ function Post(props) {
   //   { id: uuidv4(), text: "Hey!! That sounds interesting haha..." },
   // ];
   const initialComments = comments ? [...comments] : [];
-  console.log(initialComments);
+  //console.log(initialComments);
 
   const [isCommenting, toggleIsCommenting] = useToggle(false);
   const [allComments, setAllComments] = useState(initialComments);

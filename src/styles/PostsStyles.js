@@ -43,6 +43,11 @@ const styles = (theme) => ({
       cursor: "pointer",
     },
   },
+  createPostImgDiv: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+  },
 });
 
 export default styles;
